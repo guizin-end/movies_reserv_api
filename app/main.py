@@ -1,12 +1,9 @@
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-import app.routers.auth as auth
-import app.routers.movies as movies
-import app.routers.users as users
-
+from app.routers import auth, movies, users
 
 logger = logging.getLogger("uvicorn.error")
 logging.basicConfig(level=logging.INFO)

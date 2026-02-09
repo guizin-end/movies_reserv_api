@@ -1,3 +1,7 @@
+#just temporary, probably removing later
+.temp
+.temp/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
