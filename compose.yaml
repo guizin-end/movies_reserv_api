@@ -8,6 +8,32 @@ services:
     ports:
       - "5432:5432"
 
+  app:
+    image: app
+    entrypoint: ./entrypoint.sh
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      # Python
+      - ./app:/app/app
+      - ./tests:/app/tests
+
+      # Scripts
+      - ./entrypoint.sh:/app/entrypoint.sh
+
+      # Migrations
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+
+      # .env
+      - ./.env:/app/.env
 
 volumes:
   pgdata:
