@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from app.routers import auth, movies, users
 
-logger = logging.getLogger("uvicorn.error")
+logger = logging.getLogger('uvicorn.error')
 logging.basicConfig(level=logging.INFO)
 
 

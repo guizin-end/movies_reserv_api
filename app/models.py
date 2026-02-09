@@ -8,11 +8,15 @@ table_registry = registry()
 
 @table_registry.mapped_as_dataclass()
 class User:
-    __tablename__ = "users"
+    __tablename__ = 'users'
 
     id: Mapped[str] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now(), nullable=False, init=False)
-    updated_at: Mapped[datetime] = mapped_column(server_default=func.now(), onupdate=func.now(), nullable=False, init=False)
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(), nullable=False, init=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now(), nullable=False, init=False
+    )
