@@ -45,7 +45,7 @@ async def get_users(session: Session):
 
 
 @router.get('/{user_id}', response_model=UserPublic)
-async def get_user(user_id: str, session: Session):
+async def get_user_by_id(user_id: str, session: Session):
     user = await session.scalar(select(User).where(User.id == user_id))
 
     if not user:
