@@ -11,9 +11,10 @@ from app.database import get_session
 from app.models import User
 from app.schemas import UserPublic, UserSchema, UserUpdate
 from app.security import get_password_hash
+from app.routers.auth import get_current_user
 
 Session = Annotated[AsyncSession, Depends(get_session)]
-
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 router = APIRouter(prefix='/users', tags=['users'])
 
@@ -57,8 +58,12 @@ async def get_user_by_id(user_id: str, session: Session):
 
 
 @router.patch('/{user_id}', response_model=UserPublic)
-async def update_user(user_id: str, user: UserUpdate, session: Session):
-    db_user = await session.scalar(select(User).where(User.id == user_id))
+async def update_user(
+        user_id: str, user: UserUpdate, session: Session, current_user: CurrentUser
+):
+    db_user = await session.scalar(
+        select(User).where(User.id == user_id, User.id == current_user.id)
+    )
 
     if not db_user:
         raise HTTPException(
@@ -84,15 +89,22 @@ async def update_user(user_id: str, user: UserUpdate, session: Session):
 
 
 @router.delete('/{user_id}', response_model=dict)
-async def delete_user(user_id: str, session: Session):
-    user = await session.scalar(select(User).where(User.id == user_id))
+async def delete_user(user_id: str, session: Session, current_user: CurrentUser):
+    db_user = await session.scalar(
+        select(User).where(User.id == user_id)
+    )
 
-    if not user:
+    if user_id != current_user.id:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT, detail='User does not exist.'
+            status_code=HTTPStatus.FORBIDDEN, detail='Incorrect email or password.'
         )
 
-    await session.delete(user)
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='User does not exist.'
+        )
+
+    await session.delete(db_user)
     await session.commit()
 
     return {'msg': 'user deleted'}
