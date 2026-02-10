@@ -51,7 +51,7 @@ async def get_user_by_id(user_id: str, session: Session):
 
     if not user:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT, detail='User does not exist.'
+            status_code=HTTPStatus.NOT_FOUND, detail='User does not exist.'
         )
 
     return user
@@ -67,7 +67,7 @@ async def update_user(
 
     if not db_user:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT, detail='User does not exist.'
+            status_code=HTTPStatus.NOT_FOUND, detail='User does not exist.'
         )
 
     try:
