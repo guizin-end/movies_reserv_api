@@ -94,11 +94,6 @@ async def delete_user(user_id: str, session: Session, current_user: CurrentUser)
         select(User).where(User.id == user_id)
     )
 
-    if user_id != current_user.id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Incorrect email or password.'
-        )
-
     if not db_user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail='User does not exist.'
