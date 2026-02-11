@@ -73,7 +73,7 @@ def new_poster(poster, request, movie_id):
 
     poster_info = {
         'poster_path' : f'./media/movies_posters/{poster_id}.png',
-        'poster_url' : f'{request.url}{movie_id}/poster',
+        'poster_url' : f'{movie_id}/poster',
                     }
 
 

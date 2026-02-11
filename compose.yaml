@@ -41,5 +41,9 @@ services:
       # .env
       - ./.env:/app/.env
 
+      # Media
+      - ./media:/app/media
+      - ./media/movies_posters:/app/media/movies_posters
+
 volumes:
   pgdata:

@@ -4,7 +4,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 
 from app.security import get_current_user, verify_password, create_access_token
 from app.database import get_session
@@ -20,7 +20,12 @@ router = APIRouter(prefix='/auth', tags=['auth'])
 @router.post('/token')
 async def login_for_access_token(form_data: AuthForm, session: Session):
     db_user = await session.scalar(
-        select(User).where(User.email == form_data.username)
+        select(User).where(
+            or_(
+                User.email == form_data.username,
+                User.username == form_data.username
+            )
+        )
     )
 
     if not db_user:

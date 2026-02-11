@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from typing import Annotated
 from uuid import uuid4
+import os
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
 from fastapi.responses import FileResponse
@@ -40,7 +41,7 @@ async def create_movie(
         year=movie.year,
         genre=movie.genre,
         poster_path=poster_info['poster_path'],
-        poster_url=poster_info['poster_url'], # FIXME
+        poster_url=poster_info['poster_url'],
         user_id=current_user.id
     )
 
@@ -87,6 +88,9 @@ async def get_movie_poster_by_movie_id(movie_id: str, session: Session):
 
     if not db_movie:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Movie not found.')
+
+    if not os.path.exists(db_movie.poster_path):
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Movie poster not found.')
 
     return db_movie.poster_path
 
@@ -139,9 +143,11 @@ async def delete_movie(movie_id: str, session: Session, current_user: CurrentUse
     if not db_movie:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Movie not found.')
 
+    if db_movie.poster_path and os.path.exists(db_movie.poster_path):
+        os.remove(db_movie.poster_path)
+
     await session.delete(db_movie)
     await session.commit()
     await session.refresh(current_user)
 
     return {'msg' : 'Movie deleted'}
-
