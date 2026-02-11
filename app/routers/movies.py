@@ -40,7 +40,7 @@ async def create_movie(
         year=movie.year,
         genre=movie.genre,
         poster_path=poster_info['poster_path'],
-        poster_url=poster_info['poster_url'],
+        poster_url=poster_info['poster_url'], # FIXME
         user_id=current_user.id
     )
 
