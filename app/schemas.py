@@ -1,7 +1,9 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from fastapi import Form, Request
 from uuid import uuid4
 from PIL import Image
+
+from app.context import request_context
 
 
 
@@ -36,6 +38,13 @@ class MoviePublic(BaseModel):
     genre: str
     poster_path: str
     poster_url: str
+
+    @field_validator('poster_url', mode = 'after')
+    @classmethod
+    def serialize_url(cls, v):
+        # Acessa o contexto passado na rota
+        request = request_context.get()
+        return f'{request.base_url}{v}'
 
 
 class MovieUpdate(BaseModel):
@@ -73,7 +82,7 @@ def new_poster(poster, request, movie_id):
 
     poster_info = {
         'poster_path' : f'./media/movies_posters/{poster_id}.png',
-        'poster_url' : f'{movie_id}/poster',
+        'poster_url' : f'movies/{movie_id}/poster',
                     }
 
 
@@ -83,3 +92,5 @@ def new_poster(poster, request, movie_id):
 
 
     return poster_info
+
+
