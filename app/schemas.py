@@ -2,8 +2,10 @@ from pydantic import BaseModel, EmailStr, field_validator
 from fastapi import Form, Request
 from uuid import uuid4
 from PIL import Image
+from string import ascii_uppercase
 
 from app.context import request_context
+from app.models import CinemaRoom, Seat
 
 
 
@@ -92,5 +94,3 @@ def new_poster(poster, request, movie_id):
 
 
     return poster_info
-
-

@@ -13,8 +13,10 @@ from app.database import get_session
 from app.routers.auth import get_current_user
 from app.schemas import MoviePublic, MovieSchema, MovieUpdate, movie_form, update_movie_form, new_poster
 from app.models import Movie, User
+from app.routers.sessions import router as sessions_router
 
 router = APIRouter(prefix='/movies', tags=['movies'])
+router.include_router(sessions_router, prefix='/sessions', tags=['sessions'])
 
 Session = Annotated[AsyncSession, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
