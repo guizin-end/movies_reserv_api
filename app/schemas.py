@@ -2,11 +2,9 @@ from pydantic import BaseModel, EmailStr, field_validator
 from fastapi import Form, Request
 from uuid import uuid4
 from PIL import Image
-from string import ascii_uppercase
 
 from app.context import request_context
-from app.models import CinemaRoom, Seat
-
+from app.models import SeatStatus
 
 
 class UserSchema(BaseModel):
@@ -55,6 +53,26 @@ class MovieUpdate(BaseModel):
     genre: str | None = None
 
 
+class CinemaRoomCompact(BaseModel):
+    id: str
+    name: str
+    total_seats: int
+
+
+class Seat(BaseModel):
+    row: str
+    column: int
+    is_aisle: bool
+    is_accessible:bool
+    seat_reservations.status: SeatStatus
+
+
+class CinemaRoomFull(BaseModel):
+    id: str
+    name: str
+    seats: list[Seat]
+
+
 def movie_form(
         title: str = Form(...),
         year: int = Form(...),
@@ -87,10 +105,8 @@ def new_poster(poster, request, movie_id):
         'poster_url' : f'movies/{movie_id}/poster',
                     }
 
-
     db_poster = Image.open(poster.file)
     db_poster = db_poster.convert("RGB")
     db_poster.save(poster_info['poster_path'], optimize=True, quality=90, format="PNG")
-
 
     return poster_info

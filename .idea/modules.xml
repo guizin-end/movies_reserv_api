@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../learning/telemetry_learn/.idea/fastapi_learn.iml" filepath="$PROJECT_DIR$/../../learning/telemetry_learn/.idea/fastapi_learn.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../learning/fastapi_with_images_learn/.idea/fastapi_with_images_learn.iml" filepath="$PROJECT_DIR$/../../learning/fastapi_with_images_learn/.idea/fastapi_with_images_learn.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/movies_reserv_api.iml" filepath="$PROJECT_DIR$/.idea/movies_reserv_api.iml" />
     </modules>
   </component>

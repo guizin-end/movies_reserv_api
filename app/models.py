@@ -39,15 +39,15 @@ class User:
 
     created_sessions: Mapped[list[Session]] = relationship(
         back_populates='creator',
-        init=False,
         lazy='selectin',
+        init=False,
     )
 
-    reserved_seats: Mapped[list[SeatReservation]] = relationship(
+    seat_reservations: Mapped[list[SeatReservation]] = relationship(
         back_populates='user',
-        init=False,
         cascade='all, delete-orphan',
         lazy='selectin',
+        init=False,
     )
 
 
@@ -73,13 +73,12 @@ class Movie:
 
     owner: Mapped[User] = relationship(
         back_populates='movies',
-        init=False,
     )
     sessions: Mapped[list[Session]] = relationship(
         back_populates='movie',
-        init=False,
         cascade='all, delete-orphan',
         lazy='selectin',
+        init=False,
     )
 
 
@@ -102,12 +101,20 @@ class Session:
         server_default=func.now(), onupdate=func.now(), nullable=False, init=False
     )
 
-    movie: Mapped[Movie] = relationship(back_populates='sessions')
-    cinema_room: Mapped[CinemaRoom] = relationship(back_populates='sessions')
-    creator: Mapped[User] = relationship(back_populates='created_sessions')
-    reservations: Mapped[list[SeatReservation]] = relationship(
+    movie: Mapped[Movie] = relationship(
+        back_populates='sessions'
+    )
+    cinema_room: Mapped[CinemaRoom] = relationship(
+        back_populates='sessions',
+        init=False
+    )
+    creator: Mapped[User] = relationship(
+        back_populates='created_sessions'
+    )
+    seat_reservations: Mapped[list[SeatReservation]] = relationship(
         back_populates='session',
         cascade='all, delete-orphan',
+        init=False
     )
 
 
@@ -116,16 +123,26 @@ class CinemaRoom:
     __tablename__ = 'cinema_rooms'
 
     id: Mapped[str] = mapped_column(primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     total_seats: Mapped[int] = mapped_column(nullable=False)
 
     seats: Mapped[list[Seat]] = relationship(
-        back_populates='auditorium',
+        back_populates='cinema_room',
         cascade='all, delete-orphan',
+        lazy='selectin',
+        init=False,
     )
 
-    sessions: Mapped[list['Session']] = relationship(
-        back_populates='auditorium',
+    sessions: Mapped[list[Session]] = relationship(
+        back_populates='cinema_room',
+        init=False,
+    )
+
+    seat_reservations: Mapped[list[SeatReservation]] = relationship(
+        back_populates='seats',
+        init=False,
     )
 
 
@@ -142,12 +159,18 @@ class Seat:
     row: Mapped[str] = mapped_column(String(1), nullable=False)
     column: Mapped[int] = mapped_column(nullable=False)
 
-
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(), nullable=False, init=False
     )
-    cinema_room: Mapped[CinemaRoom] = relationship(back_populates='seats')
-    reservations: Mapped[list[SeatReservation]] = relationship(back_populates='seat')
+
+    cinema_room: Mapped[CinemaRoom] = relationship(
+        back_populates='seats',
+        init=False,
+    )
+    seat_reservation: Mapped[SeatReservation] = relationship(
+        back_populates='seat',
+        init=False,
+    )
 
     is_aisle: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_accessible: Mapped[bool] = mapped_column(default=False, nullable=False)
@@ -178,12 +201,12 @@ class SeatReservation:
 
     user: Mapped[User] = relationship(
         back_populates='seat_reservations',
-        init=False,
     )
 
     session: Mapped[Session] = relationship(
         back_populates='seat_reservations',
-        init=False,
     )
 
-    seat: Mapped[Seat] = relationship(back_populates='seat_reservations')
+    seat: Mapped[Seat] = relationship(
+        back_populates='seat_reservation'
+    )
