@@ -64,7 +64,6 @@ class Seat(BaseModel):
     column: int
     is_aisle: bool
     is_accessible:bool
-    seat_reservations.status: SeatStatus
 
 
 class CinemaRoomFull(BaseModel):

@@ -61,7 +61,7 @@ def upgrade() -> None:
     sa.Column('user_id', sa.String(), nullable=False),
     sa.Column('session_id', sa.String(), nullable=False),
     sa.Column('seat_id', sa.String(), nullable=False),
-    sa.Column('status', postgresql.ENUM('free', 'on_hold', 'confirmed', 'expired', name='seatstatus', create_type=False), nullable=False),
+    sa.Column('status', postgresql.ENUM('free', 'on_hold', 'confirmed', 'expired', name='seatstatus'), nullable=False),
     sa.Column('expires_at', sa.DateTime(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
@@ -81,4 +81,6 @@ def downgrade() -> None:
     op.drop_table('sessions')
     op.drop_table('seats')
     op.drop_table('cinema_rooms')
+
+    sa.Enum(name='seatstatus').drop(op.get_bind(), checkfirst=True)
     # ### end Alembic commands ###
